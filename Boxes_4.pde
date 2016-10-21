@@ -10,6 +10,7 @@ import org.jbox2d.dynamics.*;
 //
 ArrayList<Box> boxes;
 ArrayList<Boundary> boundaries;
+Boundary bn;
 
 Box2DProcessing box2d;    
 
@@ -24,6 +25,10 @@ void setup() {
   boxes = new ArrayList<Box>();
   boundaries = new ArrayList<Boundary>();
 
+  addBoundaries();
+}
+
+void addBoundaries() {
   for (int i = 0; i < 9; i++) {
     float x1 = random(200, width-200);
     float y1 = random(200, height-200);
@@ -51,11 +56,29 @@ void draw() {
   // We must always step through time!
   box2d.step();
 
-  // When the mouse is clicked, add a new Box object
-  //  if (mousePressed) {
-  Box p = new Box(width/2, 10, int(random(10, 255)), int(random(10, 255)), int(random(10, 255)));
-  boxes.add(p);
-  //  }
+  // When the mouse is clicked, reset all.
+  if (mousePressed) {
+    for (int i = boxes.size()-1; i >= 0; i--) {
+      Box b = boxes.get(i);
+      b.killBody();
+      boxes.remove(i);
+    }
+    for (int i = boundaries.size()-1; i >= 0; i--) {
+      Boundary bn = boundaries.get(i);
+      bn.killPoly();
+      boundaries.remove(i);  
+    }
+    
+    addBoundaries();
+  }
+  textSize(32);
+  fill(127);
+  String bxSize = Integer.toString(boxes.size());
+  text(bxSize, 10, 30);
+  if (boxes.size() <500) {
+    Box p = new Box(width/2, 10, int(random(10, 255)), int(random(10, 255)), int(random(10, 255)));
+    boxes.add(p);
+  }
 
   //display the boundaries
   for (Boundary wall : boundaries) {
